@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+
+  frontend:
+    image: muzaffaribrar/idurar:frontend
+    ports:
+      -3000:80
+    depends_on:
+      - backend
+    env_file:
+      - .env      # Frontend will read VITE_* variables from this file
+    restart: unless-stopped
+    
+  backend:
+    image: muzaffaribrar/idurar:backend
+    ports:
+      -8888:8888
+    depends_on:
+      - mongo
+    env_file:
+      - .env      # Backend reads DB URI, JWT_SECRET, EMAIL_* etc.
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7.0
+    ports:
+      -27017:27017
+    volumes:
+      -mongo-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
