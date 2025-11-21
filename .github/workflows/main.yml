@@ -26,11 +26,6 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
-
-      - name: setup admin
-        working-directory: ./backend
-        run: npm run setup
-
       - name: setup docker buildx
         uses: docker/setup-buildx-action@v2
 
@@ -115,6 +110,7 @@ jobs:
           # pull images from dockerhub and up the containers
           docker-compose pull 
           docker-compose up -d --remove-orphans --force-recreate
+          docker exec myproject-backend-1 npm run setup
 
           EOF
       
