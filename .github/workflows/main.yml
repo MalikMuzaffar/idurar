@@ -63,7 +63,7 @@ jobs:
           PUBLIC_SERVER_FILE: "http://${{secrets.EC2_HOST}}:8888/"    #just like "http://localhost:8888/"
 
         run: |
-          echo "${{secrets.KEY_PEM}}" > key.pem
+          echo "${{ secrets.KEY_PEM }}" > key.pem
           chmod 600 key.pem
 
           #scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
@@ -117,7 +117,7 @@ jobs:
           # pull images from dockerhub and up the containers
           docker-compose pull 
           docker-compose up -d --remove-orphans --force-recreate
-          docker exec myproject-backend-1 npm run setup
+          #docker exec myproject-backend-1 npm run setup
 
           EOF
       
