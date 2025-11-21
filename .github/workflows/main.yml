@@ -67,7 +67,7 @@ jobs:
           chmod 600 key.pem
 
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.19.185.105 << EOF
-          mkdir /home/ubuntu/myproject
+          mkdir -p /home/ubuntu/myproject
           EOF
 
           scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
