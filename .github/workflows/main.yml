@@ -94,7 +94,7 @@ jobs:
           #echo "PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE" > .env
 
           cat > .env << ENV
-          #VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
+          
           VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
           PROD=$PROD
           DATABASE=$DATABASE
