@@ -66,7 +66,11 @@ jobs:
           echo "${{ secrets.KEY_PEM }}" > key.pem
           chmod 600 key.pem
 
-          #scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.19.185.105 << EOF
+          mkdir /home/ubuntu/myproject
+          EOF
+
+          scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
 
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.19.185.105 << EOF 
 
@@ -83,10 +87,10 @@ jobs:
           docker-compose version
 
           # creating project directory in server to add docker-compose.yml and .env
-          mkdir /home/ubuntu/myproject
+          # mkdir /home/ubuntu/myproject
 
           # copying docker-compose.yml to server
-          scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
+          #scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
 
           # going inside project directory to run further commands 
           cd /home/ubuntu/myproject
