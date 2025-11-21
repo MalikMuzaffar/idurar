@@ -68,7 +68,7 @@ jobs:
 
           scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@3.19.185.105:/home/ubuntu/myproject/docker-compose.yml
 
-          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@18.218.243.84 << EOF 
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@3.19.185.105 << EOF 
 
           # update system
           sudo apt update -y
