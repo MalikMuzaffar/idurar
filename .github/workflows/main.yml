@@ -48,7 +48,7 @@ jobs:
 
       - name: build and push image of frontend
         run: |
-          docker build -t muzaffaribrar/idurar:frontend ./front-end
+          docker build -t muzaffaribrar/idurar:frontend ./frontend
           docker push muzaffaribrar/idurar:frontend
 
       - name: build backend image and push it
