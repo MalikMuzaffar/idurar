@@ -46,14 +46,14 @@ jobs:
          # echo "VITE_BACKEND_SERVER={{secrets.VITE_BACKEND_SERVER}}" >> ./frontend/.env
          # echo "PROD={{secrets.PROD}}" >> ./frontend/.env
 
-      - name: build and push image for of frontend
+      - name: build and push image of frontend
         run: |
-          docker build -t muzaffaribrar/idurar:frontend
+          docker build -t muzaffaribrar/idurar:frontend ./front-end
           docker push muzaffaribrar/idurar:frontend
 
       - name: build backend image and push it
         run: |
-          docker build -t muzaffaribrar/idurar:backend
+          docker build -t muzaffaribrar/idurar:backend ./backend
           docker push muzaffaribrar/idurar:backend
 
       - name: Deploy to EC2
