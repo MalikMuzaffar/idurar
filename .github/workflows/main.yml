@@ -28,6 +28,7 @@ jobs:
 
 
       - name: setup admin
+        working-directory: ./backend
         run: npm run setup
 
       - name: setup docker buildx
