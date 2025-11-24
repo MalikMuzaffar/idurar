@@ -53,14 +53,14 @@ jobs:
 
       - name: Deploy to EC2
         env: 
-        #VITE_FILE_BASE_URL: "http://{{secrets.EC2_HOST}}:8888/"
+          VITE_FILE_BASE_URL: "http://${{secrets.EC2_HOST}}:8888/"
           VITE_BACKEND_SERVER: "http://${{secrets.EC2_HOST}}:8888/"
           PROD: false
           DATABASE: ${{secrets.DATABASE}}
           JWT_SECRET: ${{secrets.JWT_SECRET}}
           NODE_ENV: "production"
           OPENSSL_CONF: '/dev/null'
-          PUBLIC_SERVER_FILE: "http://${{secrets.EC2_HOST}}:8888/"    #just like "http://localhost:8888/"
+          PUBLIC_SERVER_FILE: "http://${{secrets.EC2_HOST}}:3000/"    #just like "http://localhost:8888/"
 
         run: |
           echo "${{ secrets.KEY_PEM }}" > key.pem
@@ -107,8 +107,9 @@ jobs:
           #echo "PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE" > .env
 
           cat > .env << ENV
-          
+          VITE_DEV_REMOTE = 'remote'
           VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
+          VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
           PROD=$PROD
           OPENSSL_CONF=$OPENSSL_CONF
           PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
@@ -116,7 +117,7 @@ jobs:
           chmod 600 .env
 
           cat > backend.env << ENV
-          
+          PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           DATABASE=$DATABASE
           JWT_SECRET=$JWT_SECRET
           NODE_ENV=$NODE_ENV
