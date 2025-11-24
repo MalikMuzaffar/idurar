@@ -110,13 +110,18 @@ jobs:
           
           VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
           PROD=$PROD
-          DATABASE=$DATABASE
-          JWT_SECRET=$JWT_SECRET
-          NODE_ENV=$NODE_ENV
           OPENSSL_CONF=$OPENSSL_CONF
           PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           ENV
           chmod 600 .env
+
+          cat > backend.env << ENV
+          
+          DATABASE=$DATABASE
+          JWT_SECRET=$JWT_SECRET
+          NODE_ENV=$NODE_ENV
+          ENV
+          chmod 600 backend.env
 
           # pull images from dockerhub and up the containers
           docker-compose pull 

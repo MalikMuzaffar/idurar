@@ -19,7 +19,7 @@ services:
     depends_on:
       - mongo
     env_file:
-      - .env      # Backend reads DB URI, JWT_SECRET, EMAIL_* etc.
+      - backend.env      # Backend reads DB URI, JWT_SECRET, EMAIL_* etc.
     restart: unless-stopped
 
   mongo:
