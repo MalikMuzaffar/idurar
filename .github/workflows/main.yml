@@ -107,10 +107,9 @@ jobs:
           #echo "PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE" > .env
 
           cat > .env << ENV
-          VITE_DEV_REMOTE = 'remote'
+          
           VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
           VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
-          PROD=$PROD
           OPENSSL_CONF=$OPENSSL_CONF
           PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           ENV
@@ -119,13 +118,16 @@ jobs:
           cat > backend.env << ENV
           PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           DATABASE=$DATABASE
+          VITE_DEV_REMOTE = 'remote'
           JWT_SECRET=$JWT_SECRET
           NODE_ENV=$NODE_ENV
+          PROD=$PROD
           ENV
           chmod 600 backend.env
 
           # pull images from dockerhub and up the containers
           docker-compose pull 
+          docker-compose down
           docker-compose up -d --remove-orphans --force-recreate
           #docker exec myproject-backend-1 npm run setup
 
