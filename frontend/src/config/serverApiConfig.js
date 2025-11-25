@@ -23,7 +23,8 @@
 //  );
 
 
-const backend = import.meta.env.VITE_BACKEND_SERVER || 'http://localhost:8888/' || 'http://18.219.17.41:8888/';
+//const backend = import.meta.env.VITE_BACKEND_SERVER || 'http://localhost:8888/'; For Localhost
+const backend = import.meta.env.VITE_BACKEND_SERVER || 'http://18.219.17.41:8888/';
 
 export const API_BASE_URL = backend.endsWith('/')
   ? backend + 'api/'
@@ -34,7 +35,7 @@ export const BASE_URL = backend;
 export const WEBSITE_URL =
   import.meta.env.PROD || import.meta.env.VITE_DEV_REMOTE === 'remote'
     ? 'http://18.219.17.41:3000/'
-    : 'http://localhost:3000/';
+    : 'http://18.219.17.41:3000/'; //'http://localhost:3000/'; for localhost
 
 export const DOWNLOAD_BASE_URL = backend.endsWith('/')
   ? backend + 'download/'

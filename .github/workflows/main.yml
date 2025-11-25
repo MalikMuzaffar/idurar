@@ -111,14 +111,14 @@ jobs:
           VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
           VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
           OPENSSL_CONF=$OPENSSL_CONF
-          PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
+          # PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           ENV
           chmod 600 .env
 
           cat > backend.env << ENV
           PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
           DATABASE=$DATABASE
-          VITE_DEV_REMOTE = 'remote'
+          VITE_DEV_REMOTE ='remote'
           JWT_SECRET=$JWT_SECRET
           NODE_ENV=$NODE_ENV
           PROD=$PROD
