@@ -18,12 +18,36 @@ const fileUpload = require('express-fileupload');
 // create our Express app
 const app = express();
 
-app.use(
-  cors({
-    origin: true,
+// app.use(
+//   cors({
+//     origin: true,
     
-  })
-);
+//   })
+// );
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  //"http://localhost:5173",
+  "https://18.219.17.41:3000"
+];
+
+app.use(cors({
+  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+}));
+
+
+// app.use(cors({
+//   origin: "http://localhost:3000",
+//   credentials: true
+// }));
+
 
 app.use(cookieParser());
 app.use(express.json());
