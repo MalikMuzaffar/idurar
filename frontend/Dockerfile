@@ -2,6 +2,9 @@
 
 FROM node:24-alpine AS build
 
+# Upgrade Alpine packages (fixes busybox vulnerabilities)
+RUN apk upgrade --no-cache
+
 WORKDIR /New-app
 
 COPY package*.json ./
