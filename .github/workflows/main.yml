@@ -87,84 +87,73 @@ jobs:
             #    chmod 600 key.pem
             
             - name: Deploy to EC2
-        env: 
-          VITE_FILE_BASE_URL: "http://${{secrets.EC2_HOST}}:8888/"
-          VITE_BACKEND_SERVER: "http://${{secrets.EC2_HOST}}:8888/"
-          PROD: false
-          DATABASE: ${{secrets.DATABASE}}
-          JWT_SECRET: ${{secrets.JWT_SECRET}}
-          NODE_ENV: "production"
-          OPENSSL_CONF: '/dev/null'
-          PUBLIC_SERVER_FILE: "http://${{secrets.EC2_HOST}}:3000/"    #just like "http://localhost:8888/"
+              env: 
+                VITE_FILE_BASE_URL: "http://${{secrets.EC2_HOST}}:8888/"
+                VITE_BACKEND_SERVER: "http://${{secrets.EC2_HOST}}:8888/"
+                PROD: false
+                DATABASE: ${{secrets.DATABASE}}
+                JWT_SECRET: ${{secrets.JWT_SECRET}}
+                NODE_ENV: "production"
+                OPENSSL_CONF: '/dev/null'
+                PUBLIC_SERVER_FILE: "http://${{secrets.EC2_HOST}}:3000/"    #just like "http://localhost:8888/"
 
-        run: |
-          echo "${{ secrets.KEY_PEM }}" > key.pem
-          chmod 600 key.pem
+              run: |
+                echo "${{ secrets.KEY_PEM }}" > key.pem
+                chmod 600 key.pem
 
-          #ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@18.219.17.41 << EOF
-          #mkdir -p /home/ubuntu/myproject
-          #EOF
+                #ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@18.219.17.41 << EOF
+                #mkdir -p /home/ubuntu/myproject
+                #EOF
 
-          scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@18.219.17.41:/home/ubuntu/myproject/docker-compose.yml
+                scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@18.219.17.41:/home/ubuntu/myproject/docker-compose.yml
 
-          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@18.219.17.41 << EOF 
+                ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@18.219.17.41 << EOF 
 
-          # update system
-          #sudo apt update -y
+                # update system
+                #sudo apt update -y
 
-          #install docker 
-          #sudo apt install docker.io
+                #install docker 
+                #sudo apt install docker.io
 
-          #install docker compose
-          #sudo apt-get install -y docker-compose-plugin
+                #install docker compose
+                #sudo apt-get install -y docker-compose-plugin
 
-          #confirm installation
-          #docker-compose version
+                #confirm installation
+                #docker-compose version
 
-          # creating project directory in server to add docker-compose.yml and .env
-          # mkdir /home/ubuntu/myproject
+                # creating project directory in server to add docker-compose.yml and .env
+                # mkdir /home/ubuntu/myproject
 
-          # copying docker-compose.yml to server
-          #scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@18.219.17.41:/home/ubuntu/myproject/docker-compose.yml
+                # copying docker-compose.yml to server
+                #scp -o StrictHostKeyChecking=no -i key.pem ./docker-compose.yml ubuntu@18.219.17.41:/home/ubuntu/myproject/docker-compose.yml
 
-          # going inside project directory to run further commands 
-          cd /home/ubuntu/myproject
+                # going inside project directory to run further commands 
+                cd /home/ubuntu/myproject
 
+                cat > .env << ENV
           
-          # create .env file
-          #echo "VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL" > .env
-          #echo "VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER" > .env
-          #echo "PROD=$PROD" > .env
-          #echo "DATABASE=$DATABASE" > .env
-          #echo "JWT_SECRET=$JWT_SECRET" > .env
-          #echo "NODE_ENV=$NODE_ENV" > .env
-          #echo "OPENSSL_CONF=$OPENSSL_CONF" > .env
-          #echo "PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE" > .env
+                VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
+                VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
+                OPENSSL_CONF=$OPENSSL_CONF
+                # PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
+                ENV
+                chmod 600 .env
 
-          cat > .env << ENV
-          
-          VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
-          VITE_FILE_BASE_URL=$VITE_FILE_BASE_URL
-          OPENSSL_CONF=$OPENSSL_CONF
-          # PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
-          ENV
-          chmod 600 .env
+                cat > backend.env << ENV
+                PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
+                DATABASE=$DATABASE
+                VITE_DEV_REMOTE ='remote'
+                JWT_SECRET=$JWT_SECRET
+                NODE_ENV=$NODE_ENV
+                PROD=$PROD
+                ENV
+                chmod 600 backend.env
 
-          cat > backend.env << ENV
-          PUBLIC_SERVER_FILE=$PUBLIC_SERVER_FILE
-          DATABASE=$DATABASE
-          VITE_DEV_REMOTE ='remote'
-          JWT_SECRET=$JWT_SECRET
-          NODE_ENV=$NODE_ENV
-          PROD=$PROD
-          ENV
-          chmod 600 backend.env
+                # pull images from dockerhub and up the containers
+                docker-compose pull 
+                docker-compose down
+                docker-compose up -d --remove-orphans --force-recreate
+                #docker exec myproject-backend-1 npm run setup
 
-          # pull images from dockerhub and up the containers
-          docker-compose pull 
-          docker-compose down
-          docker-compose up -d --remove-orphans --force-recreate
-          #docker exec myproject-backend-1 npm run setup
-
-          EOF
+                EOF
             
