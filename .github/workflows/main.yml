@@ -30,7 +30,7 @@ jobs:
             # scanning source files and repo history with trivy
 
             - name: scanning files
-              uses: aquasecurity/trivy-action@v0.33
+              uses: aquasecurity/trivy-action@master
               with:
                 scan-type: repo
                 security-checks: secrets
@@ -42,7 +42,7 @@ jobs:
                 docker build -t muzaffaribrar/idurar:frontend ./frontend
 
             - name: Trivy scanning frontend image for secrets
-              uses: aquasecurity/trivy-action@v0.33
+              uses: aquasecurity/trivy-action@master
               with:
                 scan-type: image
                 image-ref: muzaffaribrar/idurar:frontend
@@ -64,7 +64,7 @@ jobs:
                 docker build -t muzaffaribrar/idurar:backend ./backend
 
             - name: scanning backend image with trivy
-              uses: aquasecurity/trivy-action@v0.33
+              uses: aquasecurity/trivy-action@master
               with:
                 scan-type: image
                 image-ref: muzaffaribrar/idurar:backend
