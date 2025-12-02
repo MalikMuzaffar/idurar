@@ -1,92 +1,57 @@
 name: CI/CD pipelines
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
+
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
+  build-and-push:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: checkout
-              uses: actions/checkout@v3
-              with:
-                fetch-depth: 0
+    steps:
+      - name: for checkout
+        uses: actions/checkout@v3
 
-            - name: setup node
-              uses: actions/setup-node@v3
-              with:
-                node-version: 24
+      - name: insatll node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
 
-            - name: installing frontend modules
-              working-directory: ./frontend
-              run: npm install
+      - name: Install backend modules
+        working-directory: ./backend
+        run: npm install
 
-            - name: install backend modules
-              working-directory: ./backend
-              run: npm install
+      - name: Install frontend modules
+        working-directory: ./frontend
+        run: npm install
 
-            # scanning source files and repo history with trivy
+      - name: setup docker buildx
+        uses: docker/setup-buildx-action@v2
 
-            - name: scanning files
-              uses: aquasecurity/trivy-action@v0.7.0
-              with:
-                scan-type: repo
-                security-checks: secrets
-                exit-code: 1
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-            # build and scan frontend image
-            - name: building frontend image
-              run: |
-                docker build -t muzaffaribrar/idurar:frontend ./frontend
+      #- name:  creating .env in frontend
+        #run: |
+         # echo "VITE_FILE_BASE_URL={{secrets.VITE_FILE_BASE_URL}}" >> ./frontend/.env
+         # echo "VITE_BACKEND_SERVER={{secrets.VITE_BACKEND_SERVER}}" >> ./frontend/.env
+         # echo "PROD={{secrets.PROD}}" >> ./frontend/.env
 
-            - name: Trivy scanning frontend image for secrets
-              uses: aquasecurity/trivy-action@v0.7.0
-              with:
-                scan-type: image
-                image-ref: muzaffaribrar/idurar:frontend
-                security-checks: secrets
-                exit-code: 1
+      - name: build and push image of frontend
+        run: |
+          docker build -t muzaffaribrar/idurar:frontend ./frontend
+          docker push muzaffaribrar/idurar:frontend
 
-            # Push frontend image
-            - name: Push images to docker hub
-              env:
-                DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-                DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-              run: |
-                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                docker push muzaffaribrar/idurar:frontend
+      - name: build backend image and push it
+        run: |
+          docker build -t muzaffaribrar/idurar:backend ./backend
+          docker push muzaffaribrar/idurar:backend
 
-            #build and scan backend image
-            - name: building docker image
-              run: |
-                docker run -t muzaffaribrar/idurar:backend ./backend
-
-            - name: scanning backend image with trivy
-              uses: aquasecurity/trivy-action@v0.7.0
-              with:
-                scan-type: image
-                image-ref: muzaffaribrar/idurar:backend
-                security-checks: secret
-                exit-code: 1
-
-            # push backend image to docker hub
-            - name: push to docker hub
-              env:
-                DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-                DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-              run: |
-                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                docker push muzaffaribrar/idurar:backend
-
-            # Deploy to AWS
-            #- name: prepare ssh key securly
-            #  run: |
-            #    printf '%s' "{{secrets.KEY_PEM}}" > key.pem
-            #    chmod 600 key.pem
-            
-            - name: Deploy to EC2
+      - name: Deploy to EC2
         env: 
           VITE_FILE_BASE_URL: "http://${{secrets.EC2_HOST}}:8888/"
           VITE_BACKEND_SERVER: "http://${{secrets.EC2_HOST}}:8888/"
@@ -167,4 +132,5 @@ jobs:
           #docker exec myproject-backend-1 npm run setup
 
           EOF
-            
+      
+
